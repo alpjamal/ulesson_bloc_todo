@@ -14,36 +14,59 @@ class MainPage extends StatelessWidget {
           appBar: AppBar(
             title: const Text('Home Page'),
           ),
-          body: ListView.builder(
-            itemCount: state.tasks.length,
-            itemBuilder: (context, index) {
-              MyTask currentTask = state.tasks[index];
-              return Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 10),
-                child: Card(
-                  elevation: 1,
-                  child: ListTile(
-                    leading: Checkbox(
-                      value: currentTask.isDone,
-                      onChanged: (bool? value) {
-                        context.read<MainBloc>().add(CheckTaskEvent(index: index));
+          body: state.pageStatus.isLoading
+              ? const Center(child: CircularProgressIndicator.adaptive())
+              : state.tasks.isNotEmpty
+                  ? ListView.builder(
+                      itemCount: state.tasks.length,
+                      itemBuilder: (context, index) {
+                        MyTask currentTask = state.tasks[index];
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 10),
+                          child: Card(
+                            elevation: 1,
+                            child: ListTile(
+                              leading: Checkbox(
+                                value: currentTask.isDone,
+                                onChanged: (bool? value) {
+                                  context.read<MainBloc>().add(CheckTaskEvent(index: index));
+                                },
+                              ),
+                              title: Text(currentTask.description),
+                              trailing: IconButton(
+                                onPressed: () {
+                                  context.read<MainBloc>().add(DeleteTaskEvent(index: index));
+                                },
+                                icon: const Icon(
+                                  Icons.delete,
+                                  color: Colors.red,
+                                ),
+                              ),
+                            ),
+                          ),
+                        );
                       },
-                    ),
-                    title: Text(currentTask.description),
-                    trailing: IconButton(
-                      onPressed: () {
-                        context.read<MainBloc>().add(DeleteTaskEvent(index: index));
-                      },
-                      icon: const Icon(
-                        Icons.delete,
-                        color: Colors.red,
+                    )
+                  : Center(
+                      child: Padding(
+                        padding: const EdgeInsets.all(20),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            const Text(
+                              'Oops, you have no tasks to do!',
+                              style: TextStyle(fontSize: 30),
+                            ),
+                            ElevatedButton(
+                              onPressed: () {
+                                context.read<MainBloc>().add(LoadTasksEvent());
+                              },
+                              child: const Text('Generate tasks'),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
-                  ),
-                ),
-              );
-            },
-          ),
         );
       },
     );

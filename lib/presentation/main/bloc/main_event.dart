@@ -1,6 +1,5 @@
 part of 'main_bloc.dart';
 
-@immutable
 abstract class MainEvent extends Equatable {}
 
 class LoadTasksEvent extends MainEvent {

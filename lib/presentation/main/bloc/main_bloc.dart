@@ -1,9 +1,6 @@
-import 'dart:async';
-
-import 'package:bloc/bloc.dart';
 import 'package:bloc_example/presentation/main/models.dart';
 import 'package:equatable/equatable.dart';
-import 'package:meta/meta.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 part 'main_event.dart';
 
@@ -16,10 +13,14 @@ class MainBloc extends Bloc<MainEvent, MainState> {
     on<DeleteTaskEvent>(_deleteTask);
   }
 
-  void _loadTasks(LoadTasksEvent event, Emitter<MainState> emit) {
-    var tasks = _getTasks(event.count);
-
+  void _loadTasks(LoadTasksEvent event, Emitter<MainState> emit) async {
     emit(state.copyWith(
+      pageStatus: PageStatus.loading,
+    ));
+    var tasks = _getTasks(event.count);
+    await Future.delayed(const Duration(milliseconds: 300));
+    emit(state.copyWith(
+      pageStatus: PageStatus.success,
       tasks: tasks,
     ));
   }
@@ -38,13 +39,18 @@ class MainBloc extends Bloc<MainEvent, MainState> {
     ));
   }
 
-  void _deleteTask(DeleteTaskEvent event, Emitter<MainState> emit) {
+  void _deleteTask(DeleteTaskEvent event, Emitter<MainState> emit) async {
+    emit(state.copyWith(
+      pageStatus: PageStatus.loading,
+    ));
     var editingTaskList = state.tasks;
 
     editingTaskList.removeAt(event.index);
+    await Future.delayed(const Duration(milliseconds: 300));
 
     emit(state.copyWith(
       tasks: editingTaskList,
+      pageStatus: PageStatus.success,
     ));
   }
 
