@@ -45,7 +45,7 @@ class MainBloc extends Bloc<MainEvent, MainState> {
     ));
     var editingTaskList = state.tasks;
 
-    editingTaskList.removeAt(event.index);
+    editingTaskList = editingTaskList..removeAt(event.index);
     await Future.delayed(const Duration(milliseconds: 300));
 
     emit(state.copyWith(
