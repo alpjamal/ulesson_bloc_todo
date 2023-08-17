@@ -34,12 +34,14 @@ class MainPage extends StatelessWidget {
                               ),
                               title: Text(currentTask.description),
                               trailing: IconButton(
-                                onPressed: () {
-                                  context.read<MainBloc>().add(DeleteTaskEvent(index: index));
-                                },
-                                icon: const Icon(
+                                onPressed: currentTask.isDone
+                                    ? () {
+                                        context.read<MainBloc>().add(DeleteTaskEvent(index: index));
+                                      }
+                                    : null,
+                                icon: Icon(
                                   Icons.delete,
-                                  color: Colors.red,
+                                  color: currentTask.isDone ? Colors.red : Colors.grey.shade300,
                                 ),
                               ),
                             ),
